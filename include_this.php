@@ -136,6 +136,8 @@ if($status != 2)
 
 include 'libs/subscriber.php';
 include 'libs/mail.php';
+include 'libs/groups.php';
+
 /**
  * varables to maintain
  * > total count of subscribers
@@ -143,5 +145,6 @@ include 'libs/mail.php';
  */
 $subscribersCount = subscribers::getSubscribersCount();
 $sentMailCount = mail::getSentMailCount();
+$groupsCount = group::Count();
 
 ?>

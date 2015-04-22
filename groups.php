@@ -6,7 +6,6 @@
 	 * and store group data required for current context into
 	 * onject of that class
 	 */
-	include 'libs/groups.php';
 	$grpObj = new group();
 	$grpObj->getGroups();
 
@@ -139,10 +138,13 @@
 									echo "<tr>";
 										echo "<td class='center'>" .$grpObj->grp[$i]['id'] ."</td>";
 										echo "<td>" .$grpObj->grp[$i]['name'] ."</td>";
-										echo "<td>" .$grpObj->grp[$i]['count'] ."</td>";		//members
+										echo "<td>" .$grpObj->grp[$i]['count'] ."</td>";
+										//members
+
 										echo "<td>" .$grpObj->grp[$i]['date'] ."</td>";
 										echo "<td>" .$grpObj->grp[$i]['desc'] ."</td>";
-										echo "<td><td>";			//actions							
+										echo "<td><td>";
+										//actions							
 									echo "</tr>";
 								}
 							}

@@ -5,7 +5,6 @@
 	 * and store group data required for current context into
 	 * onject of that class
 	 */
-	include 'libs/groups.php';
 	$grpObj = new group(100000);
 	$grpObj->getMailingList();
 	

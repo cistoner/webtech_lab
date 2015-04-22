@@ -13,17 +13,16 @@
 		<div>Total Subscribers</div>
 		<div><?php echo $subscribersCount; ?></div>
 	</a>
+	<a data-rel="tooltip" title="4 new pro members." class="well span3 top-block" href="#">
+		<span class="icon32 icon-color icon-star-on"></span>
+		<div>Groups</div>
+		<div><?= $groupsCount; ?></div>
+	</a>
 	<a data-rel="tooltip" title="<?php echo $sentMailCount; ?> mails sent till date" class="well span3 top-block" href="#">
 		<span class="icon32 icon-color icon-cart"></span>
 		<div>Mails Sent</div>
 		<div><?php echo $sentMailCount; ?></div>
 		<span class="notification yellow"><?php echo $sentMailCount; ?><!-- mails sent in last attempt --></span>
-	</a>
-	<a data-rel="tooltip" title="4 new pro members." class="well span3 top-block" href="#">
-		<span class="icon32 icon-color icon-star-on"></span>
-		<div>Scheduled mails</div>
-		<div>228</div>
-		<span class="notification green">4</span>
 	</a>
 	<a data-rel="tooltip" title="12 new messages." class="well span3 top-block" href="#">
 		<span class="icon32 icon-color icon-envelope-closed"></span>

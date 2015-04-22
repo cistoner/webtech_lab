@@ -14,8 +14,6 @@
 		exit;
 	}
 
-	include 'libs/groups.php';
-
 	$grpObj = new group(20, 1);
 	$grpObj->getGroups();
 

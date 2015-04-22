@@ -26,8 +26,7 @@ class group
 	/**
 	 * constructor for the subscribers class
 	 */
-	function __construct($l = 20,$p = 1)
-	{
+	function __construct($l = 20,$p = 1) {
 		$this->page = $p;
 		$this->limit = $l;
 		$this->offset = ($this->page - 1) * ($this->limit);
@@ -36,8 +35,7 @@ class group
 	/**
 	 * function to change value of limit and page
 	 */
-	 public function changeData($l = 10,$p = 1)
-	 {
+	public function changeData($l = 10,$p = 1) {
 		$this->page = $p;
 		$this->limit = $l;
 		$this->offset = ($this->page - 1) * ($this->limit);
@@ -47,8 +45,7 @@ class group
 	 * get data of groups to an array
 	 * required for current context
 	 */
-	public function getGroups($key = false)
-	{
+	public function getGroups($key = false) {
 		/**
 		 * in case a search has been made 
 		 * for a particular group name
@@ -79,6 +76,7 @@ class group
 		unset($subrow);
 		unset($subquery);
 	}
+
 	public function getMailingList()
 	{
 		$query = mysql_query("SELECT group.id,group.name,group.description,admin.username FROM `group` INNER JOIN `admin` ON group.admin_id = admin.id WHERE admin.username = '".$_SESSION[username_key]."'") or die(mysql_error());
@@ -96,6 +94,12 @@ class group
 			}
 			$this->grp[$row['name']]['emails'] = $email_string;
 		}
+	}
+
+	public static function Count() {
+		$q = mysql_query("SELECT COUNT(*) FROM `group`");
+		$r = mysql_fetch_array($q);
+		return $r[0];
 	}
 	
 };
