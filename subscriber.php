@@ -1,13 +1,34 @@
 <?php
 	include 'include_this.php';
+	if (isset($_GET['addGrp'])) {
+		$d = json_decode($_GET['addGrp'], true);
+		foreach ($d['users'] as $key => $value) {
+			foreach ($d['groups'] as $k => $v) {
+				$q = mysql_query("SELECT `group_id` FROM `group_subscribers` WHERE `group_id` = '$v' AND `subscriber_id` = '$value'");
+				if (!mysql_num_rows($q)) {
+					mysql_query("INSERT INTO `group_subscribers`(`group_id`, `subscriber_id`, `date`) VALUES ('$v', '$value', '" .time() ."')");
+				}
+			}
+		}
+		echo json_encode(array('error' => false, 'message' => 'added to group successfully'));
+		exit;
+	}
+
+	include 'libs/groups.php';
+
+	$grpObj = new group(20, 1);
+	$grpObj->getGroups();
+
+	$grps = array();
+	$i = 0;
+	foreach ($grpObj->grp as $key => $value) {
+		$grps[$i++] = array($value['name'], $value['id']);
+	}
+
 	/**
 	 * task: get list of subscribers from db
 	 */
 	$subsObj = new subscribers(20,1);
-	/**
-	 * this function retrieves the subscriber list and store it to the array
-	 * which can be used anywhere
-	 */
 	$subsObj->getSubscribers();
 	
 	/**
@@ -55,6 +76,27 @@
 
 	<!-- The fav icon -->
 	<link rel="shortcut icon" href="img/favicon.ico">
+	<style>
+		._displayGrp {
+		  display: block;
+		  padding: 10px;
+		}
+		._displayGrp span {
+		  display: inline-block;
+		  padding: 5px 17px;
+		  margin: 3px;
+		  border: 1px solid rgba(192, 192, 192, 0.39);
+		  border-radius: 3px;
+		  color: black;
+		  background: white;
+		}
+		._displayGrp span:hover, ._displayGrp span[active='true'] {
+		  background: rgba(19, 126, 173, 0.25);
+		  color: rgb(5, 11, 55);
+		  border: 1px solid rgb(33, 33, 74);
+		  cursor: pointer;
+		}
+	</style>
 </head>
 
 <body>
@@ -178,7 +220,7 @@
 							if(isset($accessObj->accessLevel['group-AE']))
 							{
 							?>
-							<a class="btn btn-info disabled" id="add_group" href="#" onclick="javascript: document.getElementById('task').value = 'ADD_GROUP';document.forms['emails'].submit();">
+							<a class="btn btn-info disabled" id="add_group" href="#">
 								<i class="icon-plus icon-white"></i>  
 								Add to group                                           
 							</a>
@@ -203,7 +245,7 @@
 						<style type="text/css">
 							
 						</style>
-						
+						<div class="_displayGrp"></div>
 						<table class="table table-striped table-bordered" id="displayTable" aria-describedby="">
 						  <thead>
 							<tr role="row">
@@ -365,5 +407,78 @@
 	<script src="js/jquery.history.js"></script>
 	<!-- application script for Charisma demo -->
 	<script src="js/charisma.js"></script>	
+
+	<script>
+	var j = <?php echo json_encode($grps); ?>;
+	var s = [];
+	var g = [];
+	$(document).ready(function() {
+
+		$("#add_group").on('click', function() {
+			s = [];
+			$(".odd[active='true'").each(function() {
+				s[s.length] = $(this).attr("id_");				
+			});
+			if (!s.length) {
+				alert('select some subscribers first');
+				return;
+			}
+
+
+			$("._displayGrp").html("");
+			for(i = 0; i < j.length; i++) {
+				$("._displayGrp").append("<span data='" +j[i][1] +"' active='false'>" +j[i][0] +"</span>");
+			}
+
+			$("._displayGrp span").on('click', function() {
+				if ($(this).attr('active') == 'true') {
+					$(this).attr('active', 'false');
+				} else {
+					$(this).attr('active', 'true');
+				}
+			});
+
+			$(this).html("Add");
+			$(this).attr("id", "add_group_");
+			$(this).unbind('click');
+
+			$(this).on('click', function(e) {
+				e.preventDefault();
+				s = [];
+				$(".odd[active='true'").each(function() {
+					s[s.length] = $(this).attr("id_");				
+				});
+				if (!s.length) {
+					alert('select some subscribers first');
+					return;
+				}
+
+				g = [];
+				$("._displayGrp span[active='true']").each(function() {
+					g[g.length] = $(this).attr("data");				
+				});
+				if (!g.length) {
+					alert('select some group first');
+					return;
+				}
+				var o = {users: s, groups: g};
+				var x = new XMLHttpRequest();
+				x.open('GET', './subscriber.php?addGrp=' +JSON.stringify(o));
+				x.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						var o = JSON.parse(this.response);
+						if (o.error) alert(o.message);
+						else location.href = './subscriber.php';
+					} else if (this.readyState == 4) {
+						alert('unable to connect to internet!');
+					}
+				}
+				x.send();
+				return;
+			})
+		});
+
+	});
+	</script>
 </body>
 </html>
