@@ -7,6 +7,16 @@
 	 */
 	$grpObj = new group(100000);
 	$grpObj->getMailingList();
+
+	$q = mysql_query("SELECT t1.name as tname, t2.name as pname, t1.content FROM `template` AS t1 INNER JOIN `template_parameter` AS t2 ON t1.id = t2.template_id");
+    if(!$q) exit(mysql_error());
+    $templates = array();
+    while($row = mysql_fetch_array($q)){
+       $templates[$row['tname']]['body'] = $row['content'];
+       $templates[$row['tname']]['params'][] = $row['pname'];
+    	// print_r($row);
+    }
+    // print_r($templates);
 	
 	dbase::close_connection();
 ?>
@@ -133,7 +143,23 @@
 								<input class="input-file uniform_on" id="fileInput" type="file">
 								<span class="help-inline" id="upload-help"></span>
 							  </div>
-							</div>          
+							</div>    
+							<div class="control-group">
+								<label class="control-label" for="selectError3">Plain Select</label>
+								<div class="controls">
+								  	<select id="select_template">
+										<option value="None" content="" params="" >None</option>
+										<?php
+											foreach ($templates as $k => $v) {
+												echo "<option value=\"$k\" content=\"".htmlentities($v[body])."\" params=\"".join($v['params'], ",")."\">$k</option>";
+											}
+										?>
+										
+								  	</select>
+								  	<span id="template-params" style="display: block; margin-top:5px;"></span>
+								</div>
+							</div>
+      
 							<div class="control-group">
 							  <label class="control-label" for="textarea2">Textarea WYSIWYG</label>
 							  <div class="controls">
@@ -257,6 +283,8 @@
 		$(document).ready(function(){
 			 $(".chzn-container").css("width","600px"); 
 			 $("#email-all").css("position","relative").css("top","-14px");
+
+			
 		});
 	<?php 
 		
@@ -373,6 +401,14 @@
 			var body = $("#email-body").val();
 			if(!(body.length>0)){$("#email-notif").html("Email body left empty");return;}
 
+			if($("#select_template option:selected").val() != "None") {
+				$("#template-params input").each(function(){
+
+					body = body.replace("{{@"+ $(this).attr('id') +"}}", $(this).val());
+				})
+			}
+
+			console.log("body : "+ body);
 			var reci = new Array();
 			$("#selectError1 option:selected").each(function(){reci[reci.length]=$(this).val();});
 
@@ -413,6 +449,20 @@
 				}
 			}
 		}
+
+		$("#select_template").change(function(e){
+			var t = $(this).find("option:selected");
+			var tar = $(this).parent().find("#template-params");
+			var params = t.attr("params").split(",")
+			text = "";
+			for(i=0; i< params.length; i++){
+				if( params[i] != "" )
+					text+=params[i]+" : <input class=\"input-xlarge\" id=\""+params[i]+"\" type=\"text\" ><br>"
+			}
+			tar.html(text);
+			
+			$("#email-body").html(t.attr("content")).blur()
+		})
 	</script>
 	
 </body>
