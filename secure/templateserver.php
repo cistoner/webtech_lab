@@ -50,6 +50,7 @@ if(isset($_POST['json']) && !empty($_POST['json'])){
         $q = mysql_query("INSERT INTO `template`( `name`, `content`) VALUES ('$json[name]','$json[body]') ");
         if(!$q) exit(mysql_error());
         $temp_id = mysql_insert_id();
+        // print_r($params);
         foreach ($params as $key => $value) {
             $qp = mysql_query("INSERT INTO `template_parameter`(`template_id`, `name`) VALUES ('$temp_id','$value')"); 
             if(!$qp) exit(mysql_error());  
