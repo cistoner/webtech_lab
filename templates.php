@@ -5,7 +5,7 @@
      * and store group data required for current context into
      * onject of that class
      */
-    include 'libs/groups.php';
+    //include 'libs/groups.php';
     $grpObj = new group(100000);
     $grpObj->getMailingList();
     
@@ -240,7 +240,7 @@
                 type: 'post',
                 data: {"json": JSON.stringify(j)},
                 success: function(data) {
-
+                    location.reload();
                 }
             })
         });
